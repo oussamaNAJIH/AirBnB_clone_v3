@@ -47,7 +47,7 @@ def create_state():
         return jsonify({"error": "Missing name"}), 400
 
     new_state = State(**data)
-    new_state.save()
+    storage.save()
     return jsonify(new_state.to_dict()), 201
 
 
@@ -62,6 +62,6 @@ def update_state(state_id):
     for key, value in data.items():
         if key not in ["id", "created_at", "updated_at"]:
             setattr(obj, key, value)
-    obj.save()
+    storage.save()
 
     return jsonify(obj.to_dict()), 200

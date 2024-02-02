@@ -55,7 +55,7 @@ def create_city(state_id):
     if 'name' not in data:
         return jsonify({"error": "Missing name"}), 400
     new_state = City(**data)
-    new_state.save()
+    storage.save()
     return jsonify(new_state.to_dict()), 201
 
 

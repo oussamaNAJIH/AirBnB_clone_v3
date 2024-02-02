@@ -6,7 +6,6 @@ from flask import jsonify, abort, request
 from api.v1.views import app_views
 from models.state import State
 from models import storage
-from werkzeug.exceptions import NotFound, MethodNotAllowed, BadRequest
 
 
 @app_views.route("/states", methods=["GET"])
@@ -19,22 +18,22 @@ def all_states():
 
 @app_views.route("/states/<state_id>", methods=["GET"])
 def get_state(state_id):
-    obj = storage.get(State, state_id)
+    obj = storage.get(State, int(state_id))
     if obj is not None:
         return jsonify(obj.to_dict())
     else:
-        raise NotFound()
+        abort(404)
 
 
 @app_views.route("/states/<state_id>", methods=["DELETE"])
 def delete_state(state_id):
-    obj = storage.get(State, state_id)
+    obj = storage.get(State, int(state_id))
     if obj is not None:
         storage.delete(obj)
         storage.save()
         return jsonify({}), 200
     else:
-        raise NotFound()
+        abort(404)
 
 
 @app_views.route("/states", methods=["POST"])
@@ -42,10 +41,10 @@ def create_state():
     data = request.get_json()
 
     if not isinstance(data, dict):
-        raise BadRequest(description='Not a JSON')
+        return jsonify({"error": "Not a JSON"}), 400
 
     if "name" not in data:
-        raise BadRequest(description='Missing name')
+        return jsonify({"error": "Missing name"}), 400
 
     new_state = State(**data)
     storage.save()
@@ -54,12 +53,12 @@ def create_state():
 
 @app_views.route("/states/<state_id>", methods=["PUT"])
 def update_state(state_id):
-    obj = storage.get(State, state_id)
+    obj = storage.get(State, int(state_id))
     if not obj:
-        raise NotFound()
+        abort(404)
     data = request.get_json()
     if not isinstance(data, dict):
-        raise BadRequest(description='Not a JSON')
+        return jsonify({"error": "Not a JSON"}), 400
     for key, value in data.items():
         if key not in ["id", "created_at", "updated_at"]:
             setattr(obj, key, value)

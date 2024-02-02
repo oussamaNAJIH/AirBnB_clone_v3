@@ -6,6 +6,7 @@ from flask import jsonify, abort, request
 from api.v1.views import app_views
 from models.state import State
 from models import storage
+from werkzeug.exceptions import NotFound, MethodNotAllowed, BadRequest
 
 
 @app_views.route("/states", methods=["GET"])
@@ -22,7 +23,7 @@ def get_state(state_id):
     if obj is not None:
         return jsonify(obj.to_dict())
     else:
-        abort(404)
+        raise NotFound()
 
 
 @app_views.route("/states/<state_id>", methods=["DELETE"])
@@ -33,7 +34,7 @@ def delete_state(state_id):
         storage.save()
         return jsonify({}), 200
     else:
-        abort(404)
+        raise NotFound()
 
 
 @app_views.route("/states", methods=["POST"])
@@ -55,7 +56,7 @@ def create_state():
 def update_state(state_id):
     obj = storage.get(State, state_id)
     if not obj:
-        abort(404)
+        raise NotFound()
     data = request.get_json()
     if not isinstance(data, dict):
         return jsonify({"error": "Not a JSON"}), 400

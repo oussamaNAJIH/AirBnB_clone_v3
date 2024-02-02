@@ -2,7 +2,7 @@
 """
 import app_views from api.v1.views
 """
-from flask import jsonify, abort, request, NotFound, MethodNotAllowed, BadRequest
+from flask import jsonify, abort, request
 from api.v1.views import app_views
 from models.state import State
 from models import storage
@@ -22,7 +22,7 @@ def get_state(state_id):
     if obj is not None:
         return jsonify(obj.to_dict())
     else:
-        raise NotFound()
+        abort(404)
 
 
 @app_views.route("/states/<state_id>", methods=["DELETE"])
@@ -32,7 +32,7 @@ def delete_state(state_id):
         storage.delete(obj)
         storage.save()
     else:
-        NotFound()
+        abort(404)
     return jsonify({}), 200
 
 
@@ -40,11 +40,11 @@ def delete_state(state_id):
 def create_state():
     data = request.get_json()
 
-    if type(data) is not dict:
-        raise BadRequest(description='Not a JSON')
+    if not data:
+        return jsonify({"error": "Not a JSON"}), 400
 
     if "name" not in data:
-        raise BadRequest(description='Missing name')
+        return jsonify({"error": "Missing name"}), 400
 
     new_state = State(**data)
     new_state.save()
@@ -57,8 +57,8 @@ def update_state(state_id):
     if not obj:
         abort(404)
     data = request.get_json()
-    if type(data) is not dict:
-        raise BadRequest(description='Not a JSON')
+    if not data:
+        return jsonify({"error": "Not a JSON"}), 400
     for key, value in data.items():
         if key not in ["id", "created_at", "updated_at"]:
             setattr(obj, key, value)

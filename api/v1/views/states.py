@@ -2,10 +2,11 @@
 """
 import app_views from api.v1.views
 """
-from flask import jsonify, abort
+from flask import jsonify, abort, request
 from api.v1.views import app_views
 from models.state import State
 from models import storage
+
 
 @app_views.route("/states", methods=["GET"])
 def all_states():
@@ -13,6 +14,7 @@ def all_states():
     for state in storage.all(State).values():
         list_states.append(state.to_dict())
     return jsonify(list_states)
+
 
 @app_views.route("/states/<state_id>", methods=["GET"])
 def get_state(state_id):
@@ -22,6 +24,7 @@ def get_state(state_id):
     else:
         abort(404)
 
+
 @app_views.route("/states/<state_id>", methods=["DELETE"])
 def delete_state(state_id):
     obj = storage.get(State, state_id)
@@ -30,3 +33,32 @@ def delete_state(state_id):
     else:
         abort(404)
     return jsonify({}), 200
+
+
+@app_views.route("/states", methods=["POST"])
+def create_state():
+    data = request.get_json()
+
+    if not data:
+        return jsonify({"error": "Not a JSON"}), 400
+
+    if "name" not in data:
+        return jsonify({"error": "Missing name"}), 400
+
+    return jsonify(data), 201
+
+
+@app_views.route("/states/<state_id>", methods=["PUT"])
+def update_state(state_id):
+    obj = storage.get(State, state_id)
+    if not obj:
+        abort(404)
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Not a JSON"}), 400
+    for key, value in data.items():
+        if key not in ["id", "created_at", "updated_at"]:
+            setattr(obj, key, value)
+    storage.save()
+
+    return jsonify(obj.to_dict()), 200

@@ -40,7 +40,7 @@ def delete_state(state_id):
 def create_state():
     data = request.get_json()
 
-    if not data:
+    if not isinstance(data, dict):
         return jsonify({"error": "Not a JSON"}), 400
 
     if "name" not in data:
@@ -57,7 +57,7 @@ def update_state(state_id):
     if not obj:
         abort(404)
     data = request.get_json()
-    if not data:
+    if not isinstance(data, dict):
         return jsonify({"error": "Not a JSON"}), 400
     for key, value in data.items():
         if key not in ["id", "created_at", "updated_at"]:

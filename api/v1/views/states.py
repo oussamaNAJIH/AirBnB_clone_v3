@@ -31,9 +31,9 @@ def delete_state(state_id):
     if obj is not None:
         storage.delete(obj)
         storage.save()
+        return jsonify({}), 200
     else:
         abort(404)
-    return jsonify({}), 200
 
 
 @app_views.route("/states", methods=["POST"])
@@ -62,6 +62,6 @@ def update_state(state_id):
     for key, value in data.items():
         if key not in ["id", "created_at", "updated_at"]:
             setattr(obj, key, value)
-    storage.save()
+    obj.save()
 
     return jsonify(obj.to_dict()), 200

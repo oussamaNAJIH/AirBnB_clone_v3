@@ -20,6 +20,10 @@ def teardown_flask(exception):
 def not_found_error(error):
     return jsonify(error='Not found'), 404
 
+@app.route("/favicon.ico")
+def favicon():
+    return '', 204
+
 
 if __name__ == '__main__':
     if getenv("HBNB_API_HOST"):

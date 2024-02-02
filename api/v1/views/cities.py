@@ -7,22 +7,27 @@ from flask import Flask, jsonify, abort, request
 from api.v1.views import app_views
 from models import storage
 from models.state import City
+from models.state import State
 
 
-@app_views.route('/cities', methods=['GET'], strict_slashes=False)
-def get_cities():
+@app_views.route('/states/<state_id>/cities', methods=['GET'],
+                 strict_slashes=False)
+def get_cities(state_id):
     """Retrieves the list of all city objects"""
-    states = [state.to_dict() for state in storage.all(City).values()]
-    return jsonify(states)
-
-
-@app_views.route('/cities/<state_id>', methods=['GET'], strict_slashes=False)
-def get_city(state_id):
-    """Retrieves a city object"""
-    state = storage.get(City, state_id)
+    state = storage.get(State, state_id)
     if state is None:
         abort(404)
-    return jsonify(state.to_dict())
+    cities = [city.to_dict() for city in state.cities]
+    return jsonify(cities)
+
+
+@app_views.route('/cities/<city_id>', methods=['GET'], strict_slashes=False)
+def get_city(state_id):
+    """Retrieves a city object"""
+    city = storage.get(City, state_id)
+    if city is None:
+        abort(404)
+    return jsonify(city.to_dict())
 
 
 @app_views.route('/cities/<city_id>', methods=['DELETE'],
@@ -34,12 +39,15 @@ def delete_city(city_id):
         abort(404)
     storage.delete(city)
     storage.save()
-    return jsonify({})
+    return jsonify({}), 200
 
 
-@app_views.route('/states', methods=['POST'], strict_slashes=False)
-def create_state():
+@app_views.route('/states/<state_id>/cities', methods=['POST'], strict_slashes=False)
+def create_city(state_id):
     """Creates a State object"""
+    state = storage.get(State, state_id)
+    if state is None:
+        abort(404)
     data = request.get_json()
     if data is None:
         return jsonify({"error": "Not a JSON"}), 400

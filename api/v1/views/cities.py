@@ -71,7 +71,7 @@ def update_city(city_id):
         return jsonify({"error": "Not a JSON"}), 400
 
     for key, value in data.items():
-        if key not in ['id', 'created_at', 'updated_at']:
+        if key not in ['id', 'created_at', 'updated_at', 'state_id']:
             setattr(city, key, value)
 
     storage.save()

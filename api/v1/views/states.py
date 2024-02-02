@@ -30,9 +30,9 @@ def delete_state(state_id):
     obj = storage.get(State, state_id)
     if obj is not None:
         storage.delete(obj)
+        return jsonify({}), 204
     else:
-        abort(404)
-    return jsonify({}), 200
+        return jsonify({"error": "State not found"}), 404
 
 
 @app_views.route("/states", methods=["POST"])

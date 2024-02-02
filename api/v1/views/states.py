@@ -42,10 +42,10 @@ def create_state():
     data = request.get_json()
 
     if not isinstance(data, dict):
-        return jsonify({"error": "Not a JSON"}), 400
+        raise BadRequest(description='Not a JSON')
 
     if "name" not in data:
-        return jsonify({"error": "Missing name"}), 400
+        raise BadRequest(description='Missing name')
 
     new_state = State(**data)
     storage.save()
@@ -59,7 +59,7 @@ def update_state(state_id):
         raise NotFound()
     data = request.get_json()
     if not isinstance(data, dict):
-        return jsonify({"error": "Not a JSON"}), 400
+        raise BadRequest(description='Not a JSON')
     for key, value in data.items():
         if key not in ["id", "created_at", "updated_at"]:
             setattr(obj, key, value)

@@ -30,22 +30,25 @@ def delete_state(state_id):
     obj = storage.get(State, state_id)
     if obj is not None:
         storage.delete(obj)
-        return jsonify({}), 204
+        storage.save()
     else:
-        return jsonify({"error": "State not found"}), 404
+        abort(404)
+    return jsonify({}), 200
 
 
 @app_views.route("/states", methods=["POST"])
 def create_state():
     data = request.get_json()
 
-    if not data:
+    if type(data) is not dict:
         return jsonify({"error": "Not a JSON"}), 400
 
     if "name" not in data:
         return jsonify({"error": "Missing name"}), 400
 
-    return jsonify(data), 201
+    new_state = State(**data)
+    new_state.save()
+    return jsonify(new_state.to_dict()), 201
 
 
 @app_views.route("/states/<state_id>", methods=["PUT"])
@@ -54,7 +57,7 @@ def update_state(state_id):
     if not obj:
         abort(404)
     data = request.get_json()
-    if not data:
+    if type(data) is not dict:
         return jsonify({"error": "Not a JSON"}), 400
     for key, value in data.items():
         if key not in ["id", "created_at", "updated_at"]:

@@ -6,7 +6,7 @@ Module for State views
 from flask import Flask, jsonify, abort, request
 from api.v1.views import app_views
 from models import storage
-from models.state import City
+from models.city import City
 from models.state import State
 
 

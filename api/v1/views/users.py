@@ -20,7 +20,7 @@ def get_users():
                  methods=['GET'], strict_slashes=False)
 def get_user(user_id):
     """Retrieves a User object"""
-    user = storage.get(User, user_id_id)
+    user = storage.get(User, user_id)
     if user is None:
         abort(404)
     return jsonify(user.to_dict())

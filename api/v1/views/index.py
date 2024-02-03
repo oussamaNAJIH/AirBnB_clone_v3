@@ -15,15 +15,15 @@ from models.user import User
 
 
 @app_views.route("/status")
-def status():
+def get_status():
     """
-     returns the status of API:
+    returns the status of API:
     """
     return jsonify(status='OK')
 
 
 @app_views.route("/stats")
-def stats():
+def get_stats():
     """
     retrieves the number of each objects by type
     """

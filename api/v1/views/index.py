@@ -14,23 +14,4 @@ from models.state import State
 from models.user import User
 
 
-@app_views.route("/status")
-def get_status():
-    """
-    returns the status of API:
-    """
-    return jsonify(status='OK')
 
-
-@app_views.route("/stats")
-def get_stats():
-    """
-    retrieves the number of each objects by type
-    """
-    classes = {"amenities": Amenity, "cities": City,
-               "places": Place, "reviews": Review, "states": State,
-               "users": User}
-    dict = {}
-    for key, value in classes.items():
-        dict[key] = storage.count(value)
-    return jsonify(dict)

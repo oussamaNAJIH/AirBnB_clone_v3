@@ -18,6 +18,9 @@ def teardown_flask(exception):
 
 @app.errorhandler(404)
 def not_found_error(error):
+    """
+    handls for 404 errors
+    """
     return jsonify(error='Not found'), 404
 
 

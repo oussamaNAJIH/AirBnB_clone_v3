@@ -6,6 +6,7 @@ from os import getenv
 import sqlalchemy
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
+import hashlib
 
 
 class User(BaseModel, Base):
@@ -25,5 +26,14 @@ class User(BaseModel, Base):
         last_name = ""
 
     def __init__(self, *args, **kwargs):
-        """initializes user"""
+        """Initializes user"""
+        if kwargs.get('password'):
+            kwargs['password'] = hashlib.md5(kwargs['password'].encode()).hexdigest()
         super().__init__(*args, **kwargs)
+
+    def to_dict(self, include_password=False):
+        """Returns a dictionary containing all keys/values of the instance"""
+        new_dict = super().to_dict()
+        if not include_password:
+            new_dict.pop('password', None)
+        return new_dict

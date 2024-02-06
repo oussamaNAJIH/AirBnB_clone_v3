@@ -77,7 +77,8 @@ def update_review(review_id):
         return jsonify({"error": "Not a JSON"}), 400
 
     for key, value in data.items():
-        if key not in ['id', 'user_id', 'created_at', 'updated_at', 'place_id']:
+        if key not in ['id', 'user_id', 'created_at',
+                       'updated_at', 'place_id']:
             setattr(review, key, value)
 
     storage.save()

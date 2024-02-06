@@ -73,16 +73,7 @@ class FileStorage:
         """
         A method to retrieve one object
         """
-        if cls is not None:
-            res = list(
-                filter(
-                    lambda x: type(x) is cls and x.id == id,
-                    self.__objects.values()
-                )
-            )
-            if res:
-                return res[0]
-        return None
+        return self.all(cls).get("{}.{}".format(cls.__name__, id))
 
     def count(self, cls=None):
         """

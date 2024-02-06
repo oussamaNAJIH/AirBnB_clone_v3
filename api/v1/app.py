@@ -1,18 +1,14 @@
 #!/usr/bin/python3
 """script that starts a Flask web application"""
 from flask import Flask, render_template, jsonify
-from flask_cors import CORS 
+from flask_cors import CORS
 from models import storage
 from api.v1.views import app_views
 from os import getenv
 
 
 app = Flask(__name__)
-if getenv("HBNB_API_HOST"):
-        host = getenv("HBNB_API_HOST")
-else:
-    host = '0.0.0.0'
-CORS(app, resources={'/*': {'origins': host}})
+CORS(app, resources={r"/*": {"origins": "0.0.0.0"}})
 app.register_blueprint(app_views)
 
 

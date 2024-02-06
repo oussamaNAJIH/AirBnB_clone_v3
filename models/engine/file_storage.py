@@ -74,9 +74,14 @@ class FileStorage:
         A method to retrieve one object
         """
         if cls is not None:
-            for obj in self.__objects.values():
-                if isinstance(obj, cls) and obj.id == id:
-                    return obj
+            res = list(
+                filter(
+                    lambda x: type(x) is cls and x.id == id,
+                    self.__objects.values()
+                )
+            )
+            if res:
+                return res[0]
         return None
 
     def count(self, cls=None):

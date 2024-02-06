@@ -79,7 +79,10 @@ class DBStorage:
         """
         A method to retrieve one object
         """
-        return self.all(cls).get("{}.{}".format(cls.__name__, id))
+        obj = None
+        if cls is not None and issubclass(cls, BaseModel):
+            obj = self.__session.query(cls).filter(cls.id == id).first()
+        return obj
 
     def count(self, cls=None):
         """

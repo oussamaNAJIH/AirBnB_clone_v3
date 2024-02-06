@@ -155,5 +155,6 @@ No known bugs at this time.
 
 ## Authors
 Oussama NAJIH - [Github](https://github.com/oussamaNAJIH)
+Ayoub EZZAHIRI - [Github]((https://github.com/aezzahir) 
 ## License
 Public Domain. No copy write protection. 
